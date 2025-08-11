@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.5.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:harp="clr-namespace:Bonsai.Harp;assembly=Bonsai.Harp"
+                 xmlns:dsp="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>Sounds</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="harp:Device">
+          <harp:PortName>COM3</harp:PortName>
+          <harp:DeviceState>Active</harp:DeviceState>
+          <harp:DumpRegisters>true</harp:DumpRegisters>
+          <harp:LedState>On</harp:LedState>
+          <harp:VisualIndicators>On</harp:VisualIndicators>
+          <harp:Heartbeat>Disable</harp:Heartbeat>
+          <harp:IgnoreErrors>false</harp:IgnoreErrors>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>MessageBytes</Selector>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>Path</Name>
+      </Expression>
+      <Expression xsi:type="Add">
+        <Operand xsi:type="StringProperty">
+          <Value>/soundcard.bin</Value>
+        </Operand>
+      </Expression>
+      <Expression xsi:type="PropertyMapping">
+        <PropertyMappings>
+          <Property Name="Path" />
+        </PropertyMappings>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="dsp:MatrixWriter">
+          <dsp:Path>Data\Test\YYYY-09-DDT13-19-49/soundcard.bin</dsp:Path>
+          <dsp:Suffix>None</dsp:Suffix>
+          <dsp:Overwrite>false</dsp:Overwrite>
+          <dsp:Layout>ColumnMajor</dsp:Layout>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="harp:CreateHarpMessage">
+          <harp:MessageType>Write</harp:MessageType>
+          <harp:Address>32</harp:Address>
+          <harp:PayloadType>U8</harp:PayloadType>
+          <harp:Payload>0</harp:Payload>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:IgnoreElements" />
+      </Expression>
+      <Expression xsi:type="BehaviorSubject">
+        <Name>Sounds</Name>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="1" To="2" Label="Source1" />
+      <Edge From="2" To="6" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="5" To="6" Label="Source2" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>
